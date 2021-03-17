@@ -4,6 +4,7 @@ import tarfile
 import pandas as pd
 import json
 from nlp import Nlp
+from reader import Reader
 
 PATH = os.path.dirname(os.path.abspath(__file__))
 #
@@ -14,26 +15,19 @@ PATH = os.path.dirname(os.path.abspath(__file__))
 #my_tar.extractall(PATH) # specify which folder to extract to
 #my_tar.close()
 
-# Loading reviews dataset
+# Loading datasets as iterators for space management.
 #reviews = pd.read_json("./yelp_academic_dataset_review.json", lines=True, chunksize=20)
 #businesses = pd.read_json("./yelp_academic_dataset_business.json", lines=True, chunksize=20)
 
-#matches = []
-#in_dc = sample['state'] == 'DC'
-#is_open = sample['is_open'] == 1
-#is_postal = sample['postal_code'] == '20005'
-#name = 'salter school'
-#count = 0
-#for sample in businesses:
-    #index = sample.index[in_dc & is_open].tolist()
-    #print(sample.loc[index, 'name'])
-    #gotcha = sample.loc[sample.index[sample['state'].str.lower() == 'bc'], :]
-    #print(gotcha['name'])
-    #for row in sample:
-        #print(row)
-    #count += 1
-    #if count == 5: break
+df = pd.read_excel('./SampleData.xlsx')
+df.drop(['Unnamed: 1', 'Unnamed: 2', 'Unnamed: 3'], axis=1, inplace=True)
+df.drop([6, 10], inplace=True)
+df.columns = ['Review']
+df.reset_index(inplace=True)
+df.drop(['index'], axis=1, inplace=True)
 
-test_file = './SampleData.xlsx'
-model = Nlp()
-model.predict(test_file)
+#model = Nlp()
+#model.predict(test_file)
+
+r = Reader(df)
+r.print_categories()

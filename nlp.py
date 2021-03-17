@@ -16,17 +16,11 @@ embeddings = gensim.models.KeyedVectors.load_word2vec_format(url, binary=True)
 class Nlp:
 
     def __init__(self):
-        self._model = self._train_model()
+        self._train_model()
 
-    def predict(self, file_path):
-        df = pd.read_excel(file_path)
-        df.drop(['Unnamed: 1', 'Unnamed: 2', 'Unnamed: 3'], axis=1, inplace=True)
-        df.drop([6, 10], inplace=True)
-        df.columns = ['Review']
-        df['Sentiment'] = [0] * len(df)
-        df.reset_index(inplace=True)
+    def predict(self, df):
         data = df.copy()
-        #print(data.head())
+        data['Sentiment'] = [0] * len(df)
 
         wl = WordNetLemmatizer()
         pre_text = []
@@ -43,11 +37,9 @@ class Nlp:
             pre_text.append(review)
 
         pre_data=pd.DataFrame(pre_text)
-        print(pre_data.head())
 
         data.drop(['Review', 'index'],axis=1,inplace=True)
         data = pd.concat([pre_data,data],axis=1)
-        print(data.head())
         data.columns = ['Review', 'Sentiment']
 
         docs_vectors = self._prepare_vectors(data)
@@ -132,7 +124,7 @@ class Nlp:
         #accuracy = accuracy_score(y_pred, y_test)
         #print('Accuracy: ',accuracy)
 
-        return clf
+        self._model = clf
 
     def _prepare_vectors(self, data):
         # Preparing vectors for classification
