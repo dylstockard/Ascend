@@ -32,6 +32,7 @@ df.drop('Unnamed: 0', axis=1, inplace=True)
 df.columns = ('review', 'date', 'overall', 'food', 'service', 'ambiance')
 
 today = date.today()
+# Weeks may throw KeyError since index is not reset
 # Get current week
 '''
 curr_week = [today.strftime('%Y-%m-%d'),
@@ -53,15 +54,17 @@ prev_week = [(today - timedelta(days=7)).strftime('%Y-%m-%d'),
             (today - timedelta(days=12)).strftime('%Y-%m-%d'),
             (today - timedelta(days=13)).strftime('%Y-%m-%d')]
 is_prev_week = df['date'].isin(prev_week)
+
 '''
 # Get current month dataframe as curr_month
 is_curr_month = list(filter(lambda x: x.split('-')[1] == today.strftime('%m'), df['date']))
 curr_month = df[df['date'].isin(is_curr_month)]
+curr_month.reset_index(inplace=True)
 # Get previous month dataframe as prev_month
 prev_month = (today.replace(day=1) - timedelta(days=1)).strftime('%m')
 is_prev_month = list(filter(lambda x: x.split('-')[1] == prev_month, df['date']))
 prev_month = df[df['date'].isin(is_prev_month)]
-
+prev_month.reset_index(inplace=True)
 '''
 # Cleaning for sample data
 df.drop(['Unnamed: 1', 'Unnamed: 2', 'Unnamed: 3'], axis=1, inplace=True)
@@ -77,8 +80,8 @@ df.drop(['index'], axis=1, inplace=True)
 #df['sentiment'] = sentiment
 
 # Creating categorizer and printing/saving
-#r = Reader(df)
+r = Reader(prev_month)
 #r.get_categories()
-#r.analyze()
+r.analyze()
 
-#report.create_report(df)
+#report.create_report(prev_month)
