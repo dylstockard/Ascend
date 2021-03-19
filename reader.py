@@ -41,7 +41,8 @@ class Reader:
     def analyze(self):
         self._count_reviews()
         self._percent_reviews()
-    
+
+
     def _count_reviews(self):
         pos = self.get_categories_pos()
         neg = self.get_categories_neg()
@@ -54,16 +55,16 @@ class Reader:
         plt.bar(cat, neg_counts, label='negative', color=ORANGE,)
         ax.set_facecolor(WHITE)
         plt.show()
-    
+
+
     def _percent_reviews(self):
         pos = self.get_categories_pos()
         neg = self.get_categories_neg()
         cat = pos.keys()
-        totals = [pos[c]+neg[c] for c in cat]
+        totals = [len(pos[c])+len(neg[c]) for c in cat]
         pos_per = [len(pos[l])/totals[l] for l in pos]
         neg_per = [len(neg[l])/totals[l] for l in neg]
 
-        fig,ax = plt.subplot(1,1)
 
     # reviews is a pandas dataframe
     def _categorize(self, reviews):
@@ -91,7 +92,7 @@ class Reader:
                         # If there is a match, check if the rating is >= 3 stars
                         # If less than 3, place in [0] (negative review)
                         index = 0
-                        if rating >= 3:
+                        if rating > 3:
                             index = 1
                         self._categories[c][index].add(i)
                         # Also add to brunch/dinner if category is food
@@ -119,6 +120,7 @@ class Reader:
         for s in self._categories:
             self._categories[s].remove(-1)
         '''
+
     # Removes stop words, and lemmatizes given review
     def _clean(self, review):
         wl = WordNetLemmatizer()
