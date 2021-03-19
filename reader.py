@@ -2,6 +2,7 @@ import pandas as pd
 from nltk.stem import WordNetLemmatizer
 from nltk.corpus import stopwords
 import re
+from wordcloud import WordCloud
 import matplotlib.pyplot as plt
 plt.style.use('ggplot')
 
@@ -15,13 +16,14 @@ class Reader:
 
     # Takes a pandas dataframe reviews to analyze
     def __init__(self, reviews):
+        self._reviews = reviews
         temp = pd.read_excel('./content_map.xlsx')
         self._map = {key: temp[key].tolist() for key in temp.columns}
         # Remove NaN values
         for key in self._map.keys():
             self._map[key] = [x for x in self._map[key] if isinstance(x, str)]
         self._categories = {key: ({-1},{-1}) for key in self._map.keys()}
-        self._categorize(reviews)
+        self._categorize()
     
  
     def get_categories(self):
@@ -39,8 +41,9 @@ class Reader:
 
 
     def analyze(self):
-        self._count_reviews()
-        self._percent_reviews()
+        #self._count_reviews()
+        #self._percent_reviews()
+        self._create_wordcloud(pos=True)
 
 
     def _count_reviews(self):
@@ -135,13 +138,63 @@ class Reader:
         plt.title(category + ' review percentages')
         plt.savefig(category + 'piechart.png')
 
+    # Takes a dictionary of lists reviews to get review content
+    # Takes boolean pos to determine if wordcloud is of positive or negative reviews
+    # Takes a string cat that determins which category is displayed. Defaults to all.
+    def _create_wordcloud(self, pos, cat='all'):
+        data = {}
+        stopwords = {'good',
+                     'great',
+                     'nice',
+                     'bad',
+                     'horrible',
+                     'terrible',
+                     'amazing',
+                     'however',
+                     'not',
+                     'no',
+                     'well',
+                     'restaurant',
+                     'definitely',
+                     'go',
+                     'really',
+                     'week',
+                     'would',
+                     'overall',
+                     'try'}
+        label=''
+        if pos:
+            data = self.get_categories_pos()
+            label = 'pos'
+        else:
+            data = self.get_categories_neg()
+            label = 'neg'
+        # Get all relevant rows
+        all_rows = set()
+        if cat == 'all':
+            for val in data.values():
+                all_rows = all_rows.union(val)
+        else:
+            try:
+                all_rows = all_rows.union(data[cat])
+            except KeyError:
+                print('Invalid input parameter for \'cat\'')
+                return None
+        words = ''
+        for row in all_rows:
+            words += self._clean(self._reviews.loc[row, 'review'])
+        wordcloud = WordCloud(stopwords=stopwords).generate(words)
+        plt.imshow(wordcloud)
+        plt.axis('off')
+        plt.tight_layout(pad=0)
+        plt.savefig('wordcloud_'+ cat + '_' + label + '.png')
 
     # reviews is a pandas dataframe
-    def _categorize(self, reviews):
-        p_reviews = reviews.copy()
+    def _categorize(self):
+        p_reviews = self._reviews.copy()
         # Clean reviews for easier processing
-        for i in range(len(reviews)):
-            p_reviews.loc[i, 'review'] = self._clean(reviews.loc[i, 'review'])
+        for i in range(len(p_reviews)):
+            p_reviews.loc[i, 'review'] = self._clean(p_reviews.loc[i, 'review'])
         
         # Categorize reviews
         # for each category of the map:
