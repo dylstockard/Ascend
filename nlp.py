@@ -18,36 +18,35 @@ class Nlp:
     def __init__(self):
         self._train_model()
 
+    # df is a pandas series of reviews
     def predict(self, df):
-        data = df.copy()
-        data['Sentiment'] = [0] * len(df)
+        data = {'review':df.tolist(),'sentiment':[0]*len(df)}
+        data = pd.DataFrame(data)
 
         wl = WordNetLemmatizer()
         pre_text = []
-        
         # Should make new method clean_data to remove redundancy
         for i in range(0, len(data)):
             all_stopwords = stopwords.words('english')
             all_stopwords.remove('not')
-            review = re.sub('[^a-zA-Z]', ' ', data['Review'][i])
+            all_stopwords.remove('no')
+            review = re.sub('[^a-zA-Z]', ' ', data['review'][i])
             review = review.lower()
             review = review.split()
             review = [wl.lemmatize(word) for word in review if not word in all_stopwords]
             review = ' '.join(review)
             pre_text.append(review)
 
-        pre_data=pd.DataFrame(pre_text)
+        pre_data = pd.DataFrame(pre_text)
 
-        data.drop(['Review', 'index'],axis=1,inplace=True)
+        data.drop(['review'],axis=1,inplace=True)
         data = pd.concat([pre_data,data],axis=1)
-        data.columns = ['Review', 'Sentiment']
+        data.columns = ['review', 'sentiment']
 
         docs_vectors = self._prepare_vectors(data)
 
         docs_vectors = docs_vectors.dropna()
-        data['Sentiment'] = self._model.predict(docs_vectors)
-        print(data.head())
-        data.to_excel(PATH + '/output.xlsx')
+        return self._model.predict(docs_vectors)
 
     def _train_model(self):
         # Training dataset.
@@ -55,7 +54,7 @@ class Nlp:
         data = pd.read_csv(url, sep='\t', header = 0)
 
         # Columns renamed
-        data.columns=['Review','Sentiment']
+        data.columns = ['review', 'sentiment']
 
         # Text Preprocessing
         # Removing numbers, special characters, etc
@@ -68,7 +67,8 @@ class Nlp:
         for i in range(0, len(data)):
             all_stopwords = stopwords.words('english')
             all_stopwords.remove('not')
-            review = re.sub('[^a-zA-Z]', ' ', data['Review'][i])
+            all_stopwords.remove('no')
+            review = re.sub('[^a-zA-Z]', ' ', data['review'][i])
             review = review.lower()
             review = review.split()
             review = [wl.lemmatize(word) for word in review if not word in all_stopwords]
@@ -79,15 +79,15 @@ class Nlp:
         pre_data.head()
 
         # %% [code]
-        data.drop('Review',axis=1,inplace=True)
+        data.drop('review',axis=1,inplace=True)
         data = pd.concat([pre_data,data],axis=1)
-        data.columns =['Review','Sentiment']
+        data.columns =['review','sentiment']
         #print(data.head())
 
         docs_vectors = self._prepare_vectors(data)
 
         # %% [code]
-        docs_vectors['Sentiment'] = data['Sentiment']
+        docs_vectors['sentiment'] = data['sentiment']
         docs_vectors = docs_vectors.dropna()
 
         # %% [code]
@@ -98,7 +98,7 @@ class Nlp:
         # Train-Test split of Data
         from sklearn.model_selection import train_test_split
 
-        x_train, x_test, y_train, y_test = train_test_split(docs_vectors.drop('Sentiment', axis=1),docs_vectors['Sentiment'], random_state=1)
+        x_train, x_test, y_train, y_test = train_test_split(docs_vectors.drop('sentiment', axis=1),docs_vectors['sentiment'], random_state=1)
 
         #print(x_test.head())
 
@@ -110,27 +110,27 @@ class Nlp:
 
         #Train the model using the training sets
         clf.fit(x_train, y_train)
-
+        '''
         # Testing accuracy
-        #y_pred=clf.predict(x_test)
-        #print(y_pred)
+        y_pred=clf.predict(x_test)
+        print(y_pred)
 
         #confusion matrix
-        #from sklearn.metrics import confusion_matrix
-        #cm = confusion_matrix(y_pred, y_test)
-        #print('Confusion Matrix: ', cm)
+        from sklearn.metrics import confusion_matrix
+        cm = confusion_matrix(y_pred, y_test)
+        print('Confusion Matrix: ', cm)
 
-        #from sklearn.metrics import accuracy_score
-        #accuracy = accuracy_score(y_pred, y_test)
-        #print('Accuracy: ',accuracy)
-
+        from sklearn.metrics import accuracy_score
+        accuracy = accuracy_score(y_pred, y_test)
+        print('Accuracy: ',accuracy)
+        '''
         self._model = clf
 
     def _prepare_vectors(self, data):
         # Preparing vectors for classification
         docs_vectors = pd.DataFrame()
 
-        for doc in data['Review']:
+        for doc in data['review']:
             temp = pd.DataFrame()  # creating a temporary dataframe
             
             for word in doc.split(' '): # looping through each word of a single document and spliting through space

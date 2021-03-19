@@ -1,11 +1,11 @@
 
 import os
-import tarfile
+#import tarfile
 import pandas as pd
 import json
-from nlp import Nlp
+#from nlp import Nlp
 from reader import Reader
-import report
+#import report
 
 #PATH = os.path.dirname(os.path.abspath(__file__))
 #
@@ -23,23 +23,30 @@ businesses = pd.read_json("./yelp_academic_dataset_business.json", lines=True, c
 '''
 
 
+
+# Cleaning data
+df = pd.read_csv('./opentable_reviews.csv')
+df.drop('Unnamed: 0', axis=1, inplace=True)
+c = ('review', 'date', 'overall', 'food', 'service', 'ambiance')
+df.columns = c
+
 '''
-Cleaning data
-df = pd.read_excel('./SampleData.xlsx')
+# Cleaning for sample data
 df.drop(['Unnamed: 1', 'Unnamed: 2', 'Unnamed: 3'], axis=1, inplace=True)
 df.drop([6, 10], inplace=True)
 df.columns = ['Review']
 df.reset_index(inplace=True)
 df.drop(['index'], axis=1, inplace=True)
 '''
-'''
-Creating NLP model and predicting reviews
-model = Nlp()
-model.predict(test_file)
-'''
-'''
-Creating categorizer and printing/saving
+
+# Creating NLP model and predicting reviews
+#model = Nlp()
+#sentiment = model.predict(df['review'])
+#df['sentiment'] = sentiment
+
+# Creating categorizer and printing/saving
 r = Reader(df)
-r.print_categories()
-'''
-report.create_report()
+r.get_categories()
+print(r.get_categories_pos())
+
+#report.create_report()
