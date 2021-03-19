@@ -1,11 +1,11 @@
 
-import os
+#import os
 #import tarfile
 import pandas as pd
-import json
+#import json
 #from nlp import Nlp
 from reader import Reader
-#import report
+import report
 
 #PATH = os.path.dirname(os.path.abspath(__file__))
 #
@@ -46,7 +46,7 @@ df.drop(['index'], axis=1, inplace=True)
 
 # Creating categorizer and printing/saving
 r = Reader(df)
-r.get_categories()
+#r.get_categories()
 r.analyze()
 
-#report.create_report()
+report.create_report(df)

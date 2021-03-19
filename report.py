@@ -5,8 +5,9 @@ from reader import Reader
 WHITE = (250, 250, 250)
 PINK = (247, 86, 124)
 SILK = (255, 250, 227)
-GREEN = (132, 137, 74)
-BLACK = (93, 87, 107)
+ORANGE = (229, 149, 0)
+BLUE = (5, 142, 217)
+BLACK = (119, 125, 167)
 
 def create_report(data):
     r = Reader(data)
@@ -21,7 +22,7 @@ def create_report(data):
 
 def _set_background(pdf):
     # Title block
-    r, g, b = SILK
+    r, g, b = WHITE
     pdf.set_fill_color(r,g,b)
     pdf.rect(x=0,
              y=0,
@@ -30,7 +31,7 @@ def _set_background(pdf):
              style='F')
     
     # Postive customer intro block
-    r, g, b = WHITE
+    r, g, b = SILK
     pdf.set_fill_color(r,g,b)
     pdf.rect(x=0,
              y=39,
@@ -39,8 +40,8 @@ def _set_background(pdf):
              style='F')
 
     # Positive customer body block
-    #r, g, b = WHITE
-    #pdf.set_fill_color(r,g,b)
+    r, g, b = BLACK
+    pdf.set_fill_color(r,g,b)
     pdf.rect(x=0,
              y=59,
              w=216,
@@ -48,7 +49,7 @@ def _set_background(pdf):
              style='F')
 
     # Positive customer reviews block
-    r, g, b = SILK
+    r, g, b = WHITE
     pdf.set_fill_color(r,g,b)
     pdf.rect(x=0,
              y=119,
@@ -57,7 +58,7 @@ def _set_background(pdf):
              style='F')
     
     # Negative customer intro block
-    r, g, b = WHITE
+    r, g, b = SILK
     pdf.set_fill_color(r,g,b)
     pdf.rect(x=0,
              y=159,
@@ -66,8 +67,8 @@ def _set_background(pdf):
              style='F')
 
     # Negative customer body block
-    #r, g, b = WHITE
-    #pdf.set_fill_color(r,g,b)
+    r, g, b = BLACK
+    pdf.set_fill_color(r,g,b)
     pdf.rect(x=0,
              y=179,
              w=216,
@@ -75,7 +76,7 @@ def _set_background(pdf):
              style='F')
 
     # Negative customer reviews block
-    r, g, b = SILK
+    r, g, b = WHITE
     pdf.set_fill_color(r,g,b)
     pdf.rect(x=0,
              y=239,
@@ -107,7 +108,7 @@ def _set_title(pdf):
 
 def _set_intro(pdf, pos):
     pdf.set_font('Courier', size=18)
-    r, g, b = GREEN
+    r, g, b = BLACK
     pdf.set_text_color(r,g,b)
     if pos:
         # positive
@@ -125,8 +126,8 @@ def _set_intro(pdf, pos):
 
 def _set_body(pdf, data, pos):
     pdf.set_font('Courier', size=20)
-    r, g, b = GREEN
+    r, g, b = BLUE
     pdf.set_text_color(r,g,b)
-    if pos:
+    #if pos:
         # positive
 
