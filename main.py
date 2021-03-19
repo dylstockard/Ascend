@@ -47,6 +47,6 @@ df.drop(['index'], axis=1, inplace=True)
 # Creating categorizer and printing/saving
 r = Reader(df)
 r.get_categories()
-print(r.get_categories_pos())
+r.analyze()
 
 #report.create_report()

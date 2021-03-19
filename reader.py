@@ -3,7 +3,13 @@ from nltk.stem import WordNetLemmatizer
 from nltk.corpus import stopwords
 import re
 import matplotlib.pyplot as plt
+plt.style.use('ggplot')
 
+WHITE = '#fafafa'
+PINK = '#f7567c'
+ORANGE = '#e59500'
+BLUE = '#058ed9'
+BLACK = '#5d576b'
 
 class Reader:
 
@@ -33,8 +39,31 @@ class Reader:
 
 
     def analyze(self):
-        labels = self._map.columns
+        self._count_reviews()
+        self._percent_reviews()
     
+    def _count_reviews(self):
+        pos = self.get_categories_pos()
+        neg = self.get_categories_neg()
+        cat = pos.keys()
+        pos_counts = [len(pos[l]) for l in pos]
+        neg_counts = [len(neg[l]) for l in neg]
+
+        fig, ax = plt.subplots(1,1)
+        plt.bar(cat, pos_counts, label='positive', color=BLUE, bottom=neg_counts)
+        plt.bar(cat, neg_counts, label='negative', color=ORANGE,)
+        ax.set_facecolor(WHITE)
+        plt.show()
+    
+    def _percent_reviews(self):
+        pos = self.get_categories_pos()
+        neg = self.get_categories_neg()
+        cat = pos.keys()
+        totals = [pos[c]+neg[c] for c in cat]
+        pos_per = [len(pos[l])/totals[l] for l in pos]
+        neg_per = [len(neg[l])/totals[l] for l in neg]
+
+        fig,ax = plt.subplot(1,1)
 
     # reviews is a pandas dataframe
     def _categorize(self, reviews):
