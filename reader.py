@@ -52,6 +52,17 @@ class Reader:
         return maxes
 
 
+    def get_helpful_reviews(self):
+        '''
+        Returns a tuple of dictionaries that contain 0=positive,
+        1=negative reviews for each category
+        '''
+        g = self._helpful_reviews(self.get_categories_pos())
+        n = self._helpful_reviews(self.get_categories_neg())
+        all_helpful = (g, n)
+        return all_helpful
+    
+    
     def _count_reviews(self):
         pos = self.get_categories_pos()
         neg = self.get_categories_neg()
@@ -209,6 +220,21 @@ class Reader:
         plt.tight_layout(pad=0)
         plt.savefig(PATH+'wordcloud_'+ cat + '_' + label + '.png', facecolor=None)
 
+
+    def _helpful_reviews(self, reviews):
+        '''
+        creates a dictionary of reviews that has the categories
+        as keys and reviews as the values
+        '''
+        review_dict= {}
+        for c in reviews:
+            review_dict[c] = []
+            all_reviews = reviews[c]
+            for r in all_reviews:
+                if (len(self._reviews.loc[r, 'review']) > 200):
+                    review_dict[c].append(self._reviews.loc[r, 'review'])
+        return review_dict
+    
     # reviews is a pandas dataframe
     def _categorize(self):
         p_reviews = self._reviews.copy()

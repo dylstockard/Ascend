@@ -1,6 +1,7 @@
-from fpdf import FPDF
+import fpdf
 from datetime import date
 from reader import Reader
+import os
 
 WHITE = (250, 250, 250)
 PINK = (247, 86, 124)
@@ -12,8 +13,14 @@ BLACK = (119, 125, 167)
 def create_report(data):
     r = Reader(data)
     maxes = r.analyze()
+    reviews = r.get_helpful_reviews()
 
-    pdf = FPDF('P','mm','Letter') # 216 x 279 mm
+    fpdf.set_global("SYSTEM_TTFONTS", os.path.join(os.path.dirname(__file__),'fonts'))
+    pdf = fpdf.FPDF('P','mm','Letter') # 216 x 279 mm
+    pdf.add_font("NotoSans", style="", fname="./font/NotoSans-Regular.ttf", uni=True)
+    pdf.add_font("NotoSans", style="B", fname="./font/NotoSans-Bold.ttf", uni=True)
+    pdf.add_font("NotoSans", style="I", fname="./font/NotoSans-Italic.ttf", uni=True)
+    pdf.add_font("NotoSans", style="BI", fname="./font/NotoSans-BoldItalic.ttf", uni=True)
     pdf.add_page()
     _set_background(pdf)
     _set_title(pdf)
@@ -22,6 +29,7 @@ def create_report(data):
     _set_text_stats(pdf, maxes)
     _set_wordcloud_text(pdf)
     _set_wordclouds(pdf)
+    _set_reviews(pdf, reviews)
     pdf.output('Review Analysis.pdf', 'F')
 
 def _set_background(pdf):
@@ -170,6 +178,7 @@ def _set_wordcloud_text(pdf):
              align='L',
              ln=1,
              border=0)
+
 def _set_wordclouds(pdf):
     pdf.image('./visuals/wordcloud_all_pos.png',
               type='png',
@@ -183,3 +192,45 @@ def _set_wordclouds(pdf):
               y=pdf.get_y(),
               w=100,
               h=50)
+
+def _set_reviews(pdf, reviews):
+    pdf.add_page()
+    # Positive reviews
+    for i in range(2):
+        pdf.set_font('NotoSans', size=18)
+        r, g, b = BLACK
+        pdf.set_text_color(r,g,b)
+        if (pdf.get_y() > 279-10):
+            pdf.add_page()
+        title = 'Negative Reviews'
+        if i == 0: title = 'Positive Reviews'
+        pdf.cell(txt=title,
+                 w=200,
+                 h=15,
+                 align='C',
+                 ln=1,
+                 border='B')
+        for cat in reviews[i]:
+            if (pdf.get_y() > 279-10):
+                pdf.add_page()
+            pdf.set_font('NotoSans', size=16)
+            r, g, b = BLACK
+            pdf.set_text_color(r,g,b)
+            c = cat[0].upper()
+            pdf.cell(txt=c+cat[1:],
+                w=200,
+                h=15,
+                align='C',
+                ln=1,
+                border=0)
+            for review in reviews[0][cat]:
+                if (pdf.get_y() > 279-55):
+                    pdf.add_page()
+                pdf.set_font('NotoSans', size=10)
+                r, g, b = BLACK
+                pdf.set_text_color(r,g,b)
+                pdf.multi_cell(txt=review,
+                        w=200,
+                        h=5,
+                        align='J',
+                        border=1)
