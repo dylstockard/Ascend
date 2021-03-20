@@ -3,11 +3,11 @@ from datetime import date
 from reader import Reader
 import os
 
-RED = 198, 88, 108
-TAN = 242, 208, 169
-SILK = 241, 227, 211
-BLUE = 34, 87, 122
-PURPLE = 142, 125, 190
+TEAL = 149, 208, 247
+TAN = 237, 222, 205
+SILK = 242, 236, 229
+BLUE = 110, 155, 185
+GREY = 133, 133, 133
 BLACK = 0, 0, 0
 WHITE = 255, 255, 255
 
@@ -44,7 +44,7 @@ def _set_background(pdf):
              style='F')
     
     # Intro block
-    r, g, b = TAN
+    r, g, b = SILK
     pdf.set_fill_color(r,g,b)
     pdf.rect(x=0,
              y=39,
@@ -53,7 +53,7 @@ def _set_background(pdf):
              style='F')
 
     # Pie charts background
-    r, g, b = SILK
+    r, g, b = WHITE
     pdf.set_fill_color(r,g,b)
     pdf.rect(x=0,
              y=59,
@@ -62,7 +62,7 @@ def _set_background(pdf):
              style='F')
 
     # Text analysis background
-    r, g, b = RED
+    r, g, b = BLUE
     pdf.set_fill_color(r,g,b)
     pdf.rect(x=0,
              y=164,

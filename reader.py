@@ -6,11 +6,11 @@ from wordcloud import WordCloud
 import matplotlib.pyplot as plt
 plt.style.use('ggplot')
 
-RED = '#C6586C'
-TAN = '#F2D0A9'
-SILK = '#F1E3D3'
-BLUE = '#22577A'
-PURPLE = '#8E7DBE'
+TEAL = '#95D0F7'
+TAN = '#EDDECD'
+SILK = '#F2ECE5'
+BLUE = '#6E9BB9'
+GREY = '#858585'
 BLACK = '#000000'
 WHITE = '#FFFFFF'
 
@@ -87,8 +87,6 @@ class Reader:
         # total review for each category
         totals = [(len(pos[c]) + len(neg[c])) for c in cat]
         pos_rev = [len(pos[l]) for l in pos]
-        #tot_pos = sum(pos_rev)
-        #tot_total = sum(totals)
         percentages = {}
         i = 0
         pos_max = ('default', -1)
@@ -102,7 +100,6 @@ class Reader:
                 pos_max = (c, positive_review_percent)
             elif (100 - positive_review_percent) > neg_max[1]:
                 neg_max = (c, 100 - positive_review_percent)
-        #percentages['overall'] = [int(avg * 100), (100 - int(avg * 100))]
 
         # graphing
         # make font larger and change style
@@ -116,39 +113,34 @@ class Reader:
         title_color = BLACK
         title_size = 25
         sizes = percentages['food']
-        ax1.pie(sizes, labels=labels, shadow=True, autopct='%1.0f%%', startangle=90, labeldistance=None, colors=[BLUE,RED])
+        ax1.pie(sizes, labels=labels, shadow=False, autopct='%1.0f%%', startangle=90, labeldistance=None, colors=[TEAL,BLUE])
         ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
         ax1.set_title('Food Reviews', fontsize=title_size, color=title_color)
-        '''
-        sizes = percentages['overall']
-        ax2.pie(sizes, labels=labels, shadow=True, autopct='%1.0f%%', startangle=90, labeldistance=None)
-        ax2.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
-        ax2.set_title('Overall Reviews', fontsize=20, color=RED)
-        '''
+        
         ax2.axis('off')
 
         sizes = percentages['brunch']
-        ax3.pie(sizes, labels=labels, shadow=True, autopct='%1.0f%%', startangle=90, labeldistance=None, colors=[BLUE,RED])
+        ax3.pie(sizes, labels=labels, shadow=False, autopct='%1.0f%%', startangle=90, labeldistance=None, colors=[TEAL,BLUE])
         ax3.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
         ax3.set_title('Brunch Reviews', fontsize=title_size, color=title_color)
                 
         sizes = percentages['dinner']
-        ax4.pie(sizes, labels=labels, shadow=True, autopct='%1.0f%%', startangle=90, labeldistance=None, colors=[BLUE,RED])
+        ax4.pie(sizes, labels=labels, shadow=False, autopct='%1.0f%%', startangle=90, labeldistance=None, colors=[TEAL,BLUE])
         ax4.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
         ax4.set_title('Dinner Reviews', fontsize=title_size, color=title_color)
 
         sizes = percentages['ambiance']
-        ax5.pie(sizes, labels=labels, shadow=True, autopct='%1.0f%%', startangle=90, labeldistance=None, colors=[BLUE,RED])
+        ax5.pie(sizes, labels=labels, shadow=False, autopct='%1.0f%%', startangle=90, labeldistance=None, colors=[TEAL,BLUE])
         ax5.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
         ax5.set_title('Ambiance Reviews', fontsize=title_size, color=title_color)
 
         sizes = percentages['service']
-        ax6.pie(sizes, labels=labels, shadow=True, autopct='%1.0f%%', startangle=90, labeldistance=None, colors=[BLUE,RED])
+        ax6.pie(sizes, labels=labels, shadow=False, autopct='%1.0f%%', startangle=90, labeldistance=None, colors=[TEAL,BLUE])
         ax6.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
         ax6.set_title('Service Reviews', fontsize=title_size, color=title_color)
 
         ax1.legend(loc='upper right', bbox_to_anchor=(2.05,1))
-        fig.patch.set_facecolor(SILK)
+        fig.patch.set_facecolor(WHITE)
         plt.savefig(PATH+'all_piecharts.png', bbox_inches='tight', pad_inches=0)
         return (neg_max, pos_max)
 
