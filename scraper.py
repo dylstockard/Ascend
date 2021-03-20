@@ -9,6 +9,8 @@ from bs4 import BeautifulSoup
 import requests
 from datetime import datetime
 from datetime import timedelta 
+
+
 def scrape():
     url = 'https://www.opentable.com/r/american-son-washington'
     response = requests.get(url)

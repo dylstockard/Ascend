@@ -66,4 +66,5 @@ df.drop(['index'], axis=1, inplace=True)
 #r.get_categories()
 #r.analyze()
 
-report.create_report(df)
+report.create_report(df, 'Report All.pdf')
+report.create_report(prev_month, 'Report February.pdf')

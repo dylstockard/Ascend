@@ -11,7 +11,7 @@ GREY = 133, 133, 133
 BLACK = 0, 0, 0
 WHITE = 255, 255, 255
 
-def create_report(data):
+def create_report(data, path='./Review Analysis.pdf'):
     r = Reader(data)
     maxes = r.analyze()
     reviews = r.get_helpful_reviews()
@@ -31,7 +31,7 @@ def create_report(data):
     _set_wordcloud_text(pdf)
     _set_wordclouds(pdf)
     _set_reviews(pdf, reviews)
-    pdf.output('Review Analysis.pdf', 'F')
+    pdf.output(path, 'F')
 
 def _set_background(pdf):
     # Title block
@@ -208,7 +208,7 @@ def _set_reviews(pdf, reviews):
                 align='C',
                 ln=1,
                 border=0)
-            for review in reviews[0][cat]:
+            for review in reviews[i][cat]:
                 if (pdf.get_y() > 279-55):
                     pdf.add_page()
                 pdf.set_font('NotoSans', size=10)
