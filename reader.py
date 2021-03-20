@@ -8,9 +8,12 @@ plt.style.use('ggplot')
 
 WHITE = '#fafafa'
 PINK = '#f7567c'
+SILK = '#fff3e3'
 ORANGE = '#e59500'
 BLUE = '#058ed9'
 BLACK = '#777da7'
+
+PATH = './visuals/'
 
 class Reader:
 
@@ -42,8 +45,11 @@ class Reader:
 
     def analyze(self):
         #self._count_reviews()
-        #self._percent_reviews()
+        maxes = self._percent_reviews()
         self._create_wordcloud(pos=True)
+        self._create_wordcloud(pos=False)
+
+        return maxes
 
 
     def _count_reviews(self):
@@ -59,7 +65,7 @@ class Reader:
         ax.set_facecolor(WHITE)
         ax.legend()
 
-        plt.savefig('review_counts.png')
+        plt.savefig(PATH+'review_counts.png')
 
 
     def _percent_reviews(self):
@@ -71,62 +77,68 @@ class Reader:
         pos_rev = [len(pos[l]) for l in pos]
         tot_pos = sum(pos_rev)
         tot_total = sum(totals)
-        avg = tot_pos / tot_total
         percentages = {}
         i = 0
+        pos_max = ('default', -1)
+        neg_max = ('default', -1)
         for c in cat:
             positive_review_percent = int((pos_rev[i] / totals[i]) * 100)
             percentages[c] = [positive_review_percent]
             percentages[c].append(100 - positive_review_percent)
             i += 1
-        percentages['overall'] = [int(avg * 100), (100 - int(avg * 100))]
+            if positive_review_percent > pos_max[1]:
+                pos_max = (c, positive_review_percent)
+            elif (100 - positive_review_percent) > neg_max[1]:
+                neg_max = (c, 100 - positive_review_percent)
+        #percentages['overall'] = [int(avg * 100), (100 - int(avg * 100))]
 
         # graphing
         # make font larger and change style
         font = {'family' : 'Tahoma',
                 'weight' : 'normal',
-                'size' : 20}
+                'size' : 25}
         plt.rc('font', **font)
 
         labels = 'Positive', 'Negative'
-        fig, [[ax1, ax2], [ax3, ax4], [ax5, ax6]] = plt.subplots(3, figsize=(10, 20), ncols=2)
+        fig, [[ax1, ax2, ax3], [ax4, ax5, ax6]] = plt.subplots(2, figsize=(20, 10), ncols=3)
+        title_color = WHITE
+        title_size = 25
         sizes = percentages['food']
-        ax1.pie(sizes, labels=labels, shadow=True, autopct='%1.1f%%', startangle=90, labeldistance=None)
+        ax1.pie(sizes, labels=labels, shadow=True, autopct='%1.0f%%', startangle=90, labeldistance=None)
         ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
-        ax1.set_title('Food Reviews', fontsize=20, color=WHITE)
-        ax1.tick_params(axis='x', colors='white')
+        ax1.set_title('Food Reviews', fontsize=title_size, color=title_color)
         '''
         sizes = percentages['overall']
-        ax2.pie(sizes, labels=labels, shadow=True, autopct='%1.1f%%', startangle=90, labeldistance=None)
+        ax2.pie(sizes, labels=labels, shadow=True, autopct='%1.0f%%', startangle=90, labeldistance=None)
         ax2.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
         ax2.set_title('Overall Reviews', fontsize=20, color=PINK)
         '''
         ax2.axis('off')
 
         sizes = percentages['brunch']
-        ax3.pie(sizes, labels=labels, shadow=True, autopct='%1.1f%%', startangle=90, labeldistance=None)
+        ax3.pie(sizes, labels=labels, shadow=True, autopct='%1.0f%%', startangle=90, labeldistance=None)
         ax3.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
-        ax3.set_title('Brunch Reviews', fontsize=20, color=WHITE)
+        ax3.set_title('Brunch Reviews', fontsize=title_size, color=title_color)
                 
         sizes = percentages['dinner']
-        ax4.pie(sizes, labels=labels, shadow=True, autopct='%1.1f%%', startangle=90, labeldistance=None)
+        ax4.pie(sizes, labels=labels, shadow=True, autopct='%1.0f%%', startangle=90, labeldistance=None)
         ax4.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
-        ax4.set_title('Dinner Reviews', fontsize=20, color=WHITE)
+        ax4.set_title('Dinner Reviews', fontsize=title_size, color=title_color)
 
         sizes = percentages['ambiance']
-        ax5.pie(sizes, labels=labels, shadow=True, autopct='%1.1f%%', startangle=90, labeldistance=None)
+        ax5.pie(sizes, labels=labels, shadow=True, autopct='%1.0f%%', startangle=90, labeldistance=None)
         ax5.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
-        ax5.set_title('Ambiance Reviews', fontsize=20, color=WHITE)
+        ax5.set_title('Ambiance Reviews', fontsize=title_size, color=title_color)
 
         sizes = percentages['service']
-        ax6.pie(sizes, labels=labels, shadow=True, autopct='%1.1f%%', startangle=90, labeldistance=None)
+        ax6.pie(sizes, labels=labels, shadow=True, autopct='%1.0f%%', startangle=90, labeldistance=None)
         ax6.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
-        ax6.set_title('Service Reviews', fontsize=20, color=WHITE)
+        ax6.set_title('Service Reviews', fontsize=title_size, color=title_color)
 
-
-        ax1.legend(loc='upper right', bbox_to_anchor=(2.05,0.8))
+        ax1.legend(loc='upper right', bbox_to_anchor=(2.05,1))
         fig.patch.set_facecolor(BLACK)
-        plt.savefig('all_piecharts.png')
+        plt.savefig(PATH+'all_piecharts.png', bbox_inches='tight', pad_inches=0)
+        return (neg_max, pos_max)
 
 
     def _plot_piechart(self, category, percentages, ax):
@@ -161,7 +173,13 @@ class Reader:
                      'week',
                      'would',
                      'overall',
-                     'try'}
+                     'try',
+                     'give',
+                     'could',
+                     'u',
+                     'food',
+                     'service',
+                     'brunch'}
         label=''
         if pos:
             data = self.get_categories_pos()
@@ -183,11 +201,13 @@ class Reader:
         words = ''
         for row in all_rows:
             words += self._clean(self._reviews.loc[row, 'review'])
-        wordcloud = WordCloud(stopwords=stopwords).generate(words)
-        plt.imshow(wordcloud)
+        wordcloud = WordCloud(stopwords=stopwords, width=1600, height=800, background_color='whitesmoke', max_words=100).generate(words)
+        fig1, ax = plt.subplots(1,1)
+        plt.figure(figsize=(2,1), dpi=400)
+        plt.imshow(wordcloud, aspect='equal')
         plt.axis('off')
         plt.tight_layout(pad=0)
-        plt.savefig('wordcloud_'+ cat + '_' + label + '.png')
+        plt.savefig(PATH+'wordcloud_'+ cat + '_' + label + '.png', facecolor=None)
 
     # reviews is a pandas dataframe
     def _categorize(self):

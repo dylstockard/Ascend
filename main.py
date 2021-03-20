@@ -80,8 +80,8 @@ df.drop(['index'], axis=1, inplace=True)
 #df['sentiment'] = sentiment
 
 # Creating categorizer and printing/saving
-r = Reader(df)
+#r = Reader(df)
 #r.get_categories()
-r.analyze()
+#r.analyze()
 
-#report.create_report(prev_month)
+report.create_report(df)
