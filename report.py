@@ -3,12 +3,13 @@ from datetime import date
 from reader import Reader
 import os
 
-WHITE = (250, 250, 250)
-PINK = (247, 86, 124)
-SILK = (255, 250, 227)
-ORANGE = (229, 149, 0)
-BLUE = (5, 142, 217)
-BLACK = (119, 125, 167)
+RED = 198, 88, 108
+TAN = 242, 208, 169
+SILK = 241, 227, 211
+BLUE = 34, 87, 122
+PURPLE = 142, 125, 190
+BLACK = 0, 0, 0
+WHITE = 255, 255, 255
 
 def create_report(data):
     r = Reader(data)
@@ -34,7 +35,7 @@ def create_report(data):
 
 def _set_background(pdf):
     # Title block
-    r, g, b = SILK
+    r, g, b = BLUE
     pdf.set_fill_color(r,g,b)
     pdf.rect(x=0,
              y=0,
@@ -42,8 +43,8 @@ def _set_background(pdf):
              h=39,
              style='F')
     
-    # Postive customer intro block
-    r, g, b = BLUE
+    # Intro block
+    r, g, b = TAN
     pdf.set_fill_color(r,g,b)
     pdf.rect(x=0,
              y=39,
@@ -51,65 +52,47 @@ def _set_background(pdf):
              h=20,
              style='F')
 
-    # Positive customer body block
-    r, g, b = BLACK
+    # Pie charts background
+    r, g, b = SILK
     pdf.set_fill_color(r,g,b)
     pdf.rect(x=0,
              y=59,
              w=216,
-             h=60,
+             h=115,
              style='F')
 
-    # Positive customer reviews block
-    r, g, b = BLACK
+    # Text analysis background
+    r, g, b = RED
     pdf.set_fill_color(r,g,b)
     pdf.rect(x=0,
-             y=119,
+             y=164,
              w=216,
-             h=40,
+             h=30,
+             style='F')
+
+    # Wordcloud background
+    r, g, b = WHITE
+    pdf.set_fill_color(r, g, b)
+    pdf.rect(x=0,
+             y=194,
+             w=216,
+             h=86,
              style='F')
     
-    # Negative customer intro block
-    r, g, b = BLACK
-    pdf.set_fill_color(r,g,b)
-    pdf.rect(x=0,
-             y=159,
-             w=216,
-             h=20,
-             style='F')
-
-    # Negative customer body block
-    r, g, b = BLACK
-    pdf.set_fill_color(r,g,b)
-    pdf.rect(x=0,
-             y=179,
-             w=216,
-             h=60,
-             style='F')
-
-    # Negative customer reviews block
-    r, g, b = BLACK
-    pdf.set_fill_color(r,g,b)
-    pdf.rect(x=0,
-             y=239,
-             w=216,
-             h=40,
-             style='F')
-
 def _set_title(pdf):
     # Header
     pdf.set_title(' Review Analysis')
     pdf.set_font('Courier', 'B', 32)
-    r, g, b = PINK
+    r, g, b = WHITE
     pdf.set_text_color(r,g,b)
     pdf.cell(txt=' Review Analysis',
              w=40,
              h=15,
              border='L',
-             ln=2)
+             ln=1)
 
     # Date
-    r, g, b = BLACK
+    r, g, b = SILK
     pdf.set_text_color(r,g,b)
     pdf.set_font('Courier', 'I', 15)
     d = date.today().strftime('  %B %d, %Y')
@@ -120,13 +103,13 @@ def _set_title(pdf):
 
 def _set_intro(pdf):
     pdf.set_font('Courier', size=18)
-    r, g, b = WHITE
+    r, g, b = BLACK
     pdf.set_text_color(r,g,b)
     pdf.cell(txt='This month, your customers said...',
              w=110,
-             h=50,
+             h=45,
              align='R',
-             ln=2)
+             ln=1)
 
 def _set_body(pdf):
     pdf.image('./visuals/all_piecharts.png',
@@ -138,19 +121,22 @@ def _set_body(pdf):
 def _set_text_stats(pdf, maxes):
     pos_max = maxes[1]
     neg_max = maxes[0]
-    good = 'Your customers loved your ' + pos_max[0] + '...'
-    bad = '...but your ' + neg_max[0] + ' could improve.'
+    good = '   Your customers loved your ' + pos_max[0] + '...'
+    bad = '         ...but your ' + neg_max[0] + ' could improve.'
     
+    pdf.cell(w=216,
+             h=5,
+             ln=1)
     pdf.set_font('Courier', size=18)
-    r, g, b = WHITE
+    r, g, b = SILK
     pdf.set_text_color(r,g,b)
-    pdf.cell(w=25,h=15,ln=0)
     pdf.cell(txt=good,
              w=170,
              h=15,
              align='L',
              ln=1,
              border=0)
+    pdf.cell(w=50,h=10,ln=0)
     pdf.cell(txt=bad,
              w=135,
              h=10,
@@ -160,10 +146,10 @@ def _set_text_stats(pdf, maxes):
 
 def _set_wordcloud_text(pdf):
     pdf.set_font('Courier', size=14)
-    r, g, b = WHITE
+    r, g, b = BLACK
     pdf.set_text_color(r,g,b)
     pdf.cell(w=216,
-             h=5,
+             h=15,
              ln=1)
     pdf.cell(txt='  Positive Review Wordcloud',
              w=108,
@@ -171,7 +157,6 @@ def _set_wordcloud_text(pdf):
              align='L',
              ln=0,
              border=0)
-
     pdf.cell(txt='  Negative Review Wordcloud',
              w=108,
              h=10,
