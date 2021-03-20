@@ -4,6 +4,9 @@ from reader import Reader
 import report
 from datetime import date
 from datetime import timedelta
+import scraper
+# Update data and save as opentable_reviews.csv
+scraper.scrape()
 
 # Cleaning data
 df = pd.read_csv('./opentable_reviews.csv')
